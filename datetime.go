@@ -1,23 +1,22 @@
 package datetime
 
 import (
-	"./parser"
 	"time"
 )
 
 // This
 func GetDatetime(dt string, location *time.Location) (result time.Time, err error) {
-	dateParams, eliminatedDt, err := parser.GetDate(dt)
-	timeParams, _, err := parser.GetTime(eliminatedDt)
+	dateParams, eliminatedDt, err := getDate(dt)
+	timeParams, _, err := getTime(eliminatedDt)
 
 	result = time.Date(
-		dateParams.Year,
-		time.Month(dateParams.Month),
-		dateParams.Day,
-		timeParams.Hour,
-		timeParams.Min,
-		timeParams.Sec,
-		timeParams.Nsec,
+		dateParams.year,
+		time.Month(dateParams.month),
+		dateParams.day,
+		timeParams.hour,
+		timeParams.min,
+		timeParams.sec,
+		timeParams.nsec,
 		location)
 
 	return

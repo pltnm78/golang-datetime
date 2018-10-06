@@ -1,4 +1,4 @@
-package parser
+package datetime
 
 import (
 	"errors"
@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-type TimeParams struct {
-	Hour, Min, Sec, Nsec int
+type timeParams struct {
+	hour, min, sec, nsec int
 }
 
 // regexp Time
@@ -26,7 +26,7 @@ var regTime11 = regexp.MustCompile(`[tT]?([01][0-9]|2[0-4])\.([0-5][0-9])`)     
 var regTime12 = regexp.MustCompile(`[tT]?([01][0-9]|2[0-4]):([0-5][0-9])`)                            // [tT]?HH:MM
 var regTime13 = regexp.MustCompile(`[tT]?([01][0-9]|2[0-4])([0-5][0-9])`)                             // [tT]?HHMM
 
-func GetTime(dt string) (params TimeParams, eliminated string, err error) {
+func getTime(dt string) (params timeParams, eliminated string, err error) {
 	params, eliminated, err = parseTime(strings.ToLower(dt))
 
 	if err != nil {
@@ -37,7 +37,7 @@ func GetTime(dt string) (params TimeParams, eliminated string, err error) {
 }
 
 // This parses "time" factors by datetime format string.
-func parseTime(str string) (prm TimeParams, eliminated string, err error) {
+func parseTime(str string) (prm timeParams, eliminated string, err error) {
 	var hour, min, sec, nsec int
 
 	if !isPrepared {
@@ -64,14 +64,14 @@ func parseTime(str string) (prm TimeParams, eliminated string, err error) {
 		}
 
 		if err == nil {
-			prm = TimeParams{hour, min, sec, nsec}
+			prm = timeParams{hour, min, sec, nsec}
 			eliminated = strings.Replace(str, matchTime[0], "", -1)
 			return
 		} else {
-			return TimeParams{0, 0, 0, 0}, str, nil
+			return timeParams{0, 0, 0, 0}, str, nil
 		}
 	} else {
-		return TimeParams{0, 0, 0, 0}, str, nil
+		return timeParams{0, 0, 0, 0}, str, nil
 	}
 
 	return

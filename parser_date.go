@@ -1,4 +1,4 @@
-package parser
+package datetime
 
 import (
 	"errors"
@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-type DateParams struct {
-	Year, Month, Day int
+type dateParams struct {
+	year, month, day int
 }
 
 // regexp Date
@@ -33,7 +33,7 @@ var regDate17 = regexp.MustCompile(`([a-z]{1,9})[ .\t-]*([0-9]{1,2})[,.stndrh\t 
 var regDate18 = regexp.MustCompile(`([0-9]{4})[ \t.-]*([a-z]{1,9})`)                             // YY([ \t.-])*m
 var regDate19 = regexp.MustCompile(`([0-9]{1,2})[ .\t-]*([a-z]{1,9})`)                           // dd([ .\t-])*m
 
-func GetDate(dt string) (params DateParams, eliminated string, err error) {
+func getDate(dt string) (params dateParams, eliminated string, err error) {
 	params, eliminated, err = parseDate(strings.ToLower(dt))
 
 	if err != nil {
@@ -44,7 +44,7 @@ func GetDate(dt string) (params DateParams, eliminated string, err error) {
 }
 
 // This parses "date" factors by datetime format string.
-func parseDate(str string) (prm DateParams, eliminated string, err error) {
+func parseDate(str string) (prm dateParams, eliminated string, err error) {
 	var year, month, day int
 
 	if !isPrepared {
@@ -72,7 +72,7 @@ func parseDate(str string) (prm DateParams, eliminated string, err error) {
 				tmpYear, _ := strconv.Atoi(matchDate[3])
 				if tmpYear < 61 {
 					// Skip date format dd.mm.yy to prioritize time format
-					return DateParams{time.Now().Year(), int(time.Now().Month()), time.Now().Day()}, str, nil
+					return dateParams{time.Now().Year(), int(time.Now().Month()), time.Now().Day()}, str, nil
 				}
 			}
 		case 16:
@@ -84,19 +84,18 @@ func parseDate(str string) (prm DateParams, eliminated string, err error) {
 		}
 
 		if err == nil {
-			prm = DateParams{year, month, day}
+			prm = dateParams{year, month, day}
 			eliminated = strings.Replace(str, matchDate[0], "", -1)
 			return
 		} else {
-			return DateParams{time.Now().Year(), int(time.Now().Month()), time.Now().Day()}, str, nil
+			return dateParams{time.Now().Year(), int(time.Now().Month()), time.Now().Day()}, str, nil
 		}
 	} else {
-		return DateParams{time.Now().Year(), int(time.Now().Month()), time.Now().Day()}, str, nil
+		return dateParams{time.Now().Year(), int(time.Now().Month()), time.Now().Day()}, str, nil
 	}
 
 	return
 }
-
 
 func validateDate(year string, month string, day string) (y int, m int, d int, e error) {
 	// parse to int from input string
